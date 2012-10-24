@@ -29,9 +29,11 @@ function main()
    local data_train, data_test = spambase:getDatasets(3000,1000)
 
    -- 2. Initialize a dual SVM with linear kernel, and C = 0.05.
-   print("Initializing a linear kernel SVM with C = 0.05...")
-   local model = xsvm.vectorized{kernel = kernLin(), C = 0.05}
-   
+   print("Initializing a Polynomial kernel SVM with C = 0.05...")
+   -- local model = xsvm.vectorized{kernel = kernLin(), C = 0.05}
+   local model = xsvm.vectorized{kernel = kernPoly(1,3), C = 0.05}
+   --print("Breakpoint1")
+
    -- 3. Train the kernel SVM
    print("Training the kernel SVM...")
    local error_train = model:train(data_train)
