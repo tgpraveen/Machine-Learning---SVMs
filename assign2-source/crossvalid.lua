@@ -59,6 +59,7 @@ function crossvalid(mfunc, k, dataset)
    
    local p = 0
 
+   --  Just creating our models[i] with different values of C and polynomial kernel degree.
    for i = 0, deg-1 do
      p = 0
      for j = 2^-z, 2^z, 2 do
