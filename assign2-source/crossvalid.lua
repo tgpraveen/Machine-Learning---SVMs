@@ -43,7 +43,7 @@ by model[i]:test(dataset) after training it.
 
 function mfunc(degree,C_var_formal_arg)
    return xsvm.vectorized{kernel = kernPoly(1,degree), C = C_var_formal_arg}
-   end
+end
 
 function crossvalid(mfunc, k, dataset)
    -- Remove the following line and add your stuff
@@ -69,7 +69,7 @@ function crossvalid(mfunc, k, dataset)
    end
 
    for i = 1, k do
-   	
+    
    	errors_train[i] = models[i]:train(dataset)
    	errors_test[i] = models[i]:test(dataset)
    end
