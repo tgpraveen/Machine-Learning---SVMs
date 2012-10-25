@@ -54,6 +54,7 @@ end
 function regL1(lambda)
    -- Remove the following line and add your stuff
    -- print("You have to define this function by yourself!");
+   --MIGHT BE WRONG!!
    local regularizer = {}
    -- The loss value of this regularizer
    function regularizer:l(w) return torch.sum(w)*lambda end

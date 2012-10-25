@@ -40,18 +40,37 @@ by model[i]:test(dataset) after training it.
 -- models is a table in which models[k] indicates the kth one returned by mfunc
 -- errors_train is a vector of size k indicating the training errors
 -- errors_test is a vector of size k indicating the cross-validation errors
+
+function mfunc(degree,C_var_formal_arg)
+   return xsvm.vectorized{kernel = kernPoly(1,degree), C = C_var_formal_arg}
+   end
+
 function crossvalid(mfunc, k, dataset)
    -- Remove the following line and add your stuff
    -- print("You have to define this function by yourself!");
+   
    local model = {}
    errors_train = torch.ones(k)
    errors_test = torch.ones(k)
-   models = torch.ones(k)
    
+   local z = 4
+   local deg = 4
+   models = torch.ones(z*deg)
+   
+   local p = 0
+
+   for i = 0, deg-1 do
+     p = 0
+     for j = 2^-z, 2^z, 2 do
+     p=p+1
+     models[i*(2*z+1) + p]=mfunc((i+1),j)
+     end
+   end
+
    for i = 1, k do
-   models[i] = mfunc(i)
-   errors_train[i] = models[i]:train(dataset)
-   errors_test[i] = models[i]:test(dataset)
+   	
+   	errors_train[i] = models[i]:train(dataset)
+   	errors_test[i] = models[i]:test(dataset)
    end
 
 end
