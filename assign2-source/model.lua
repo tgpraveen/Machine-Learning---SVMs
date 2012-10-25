@@ -87,22 +87,32 @@ function modPrimSVM(inputs, r)
    model.w = torch.rand(inputs)
    -- Define the loss function. Output is a real number (not 1-dim tensor!).
    -- Assuming y is a 1-dim tensor. Taking regularizer into consideration
-   function model:l(x,y)
-      return (torch.dot(model.w,x) - y[1])^2/2 + r:l(model.w)
+   function model:l(xi,yi)
+      if ((1-yi*(torch.dot(model.w,xi)))>0) then return (1-yi*(torch.dot(model.w,xi))+r:l(model.w))
+      	else return r:l(model.w)
+	  end
    end
-   -- Define the gradient function. Taking regularizer into consideration.
    function model:dw(x,y)
-      return x*(torch.dot(model.w,x) - y[1]) + r:dw(model.w)
+      -- Remove the following line and add your stuff
+      -- print("You have to define this function by yourself!");
+		if ((1-yi*(torch.dot(model.w,xi)))>0) then 
+        	return (-y[1]*x) + r:dw(model.w)
+        else
+            return r:dw(model.w)
    end
    -- Define the output function. Output is a 1-dim tensor.
    function model:f(x)
-      return torch.ones(1)*torch.dot(model.w,x)
+      -- Remove the following line and add your stuff
+      -- print("You have to define this function by yourself!");
+		return torch.ones(1)*torch.dot(model.w,x)
    end
    -- Define the indicator function, who gives a binary classification
    function model:g(x)
-      if model:f(x)[1] >= 0 then return torch.ones(1) end
-      return -torch.ones(1)
-   end
+      -- Remove the following line and add your stuff
+      -- print("You have to define this function by yourself!");
+		if model:f(x)[1] >= 0 then return torch.ones(1) end
+      		return -torch.ones(1)
+   		end
    -- Return this model
    return model
 end

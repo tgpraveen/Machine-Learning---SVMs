@@ -42,5 +42,16 @@ by model[i]:test(dataset) after training it.
 -- errors_test is a vector of size k indicating the cross-validation errors
 function crossvalid(mfunc, k, dataset)
    -- Remove the following line and add your stuff
-   print("You have to define this function by yourself!");
+   -- print("You have to define this function by yourself!");
+   local model = {}
+   errors_train = torch.ones(k)
+   errors_test = torch.ones(k)
+   models = torch.ones(k)
+   
+   for i = 1, k do
+   models[i] = mfunc(i)
+   errors_train[i] = models[i]:train(dataset)
+   errors_test[i] = models[i]:test(dataset)
+   end
+
 end

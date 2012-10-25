@@ -37,7 +37,7 @@ function kernPoly(c, d)
    -- Remove the following line and add your stuff
    -- print("You have to define this function by yourself!");
    local kfunc = function (x,y)
-      print("Using Polynomial Kernel.")
+      -- print("Using Polynomial Kernel.")
       return torch.pow((torch.ones(1)*(torch.dot(x,y)+c)),d)[1]
    end
    -- Return this callable

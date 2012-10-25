@@ -26,24 +26,29 @@ dofile("mnist.lua")
 function main()
    -- 1. Load spambase dataset
    print("Initializing datasets...")
-   local data_train, data_test = spambase:getDatasets(3000,1000)
+   -- local data_train, data_test = spambase:getDatasets(3000,1000)
+   local data_train_kern_poly, data_test_kern_poly = spambase:getDatasets(3000,1000)
 
    -- 2. Initialize a dual SVM with linear kernel, and C = 0.05.
    print("Initializing a Polynomial kernel SVM with C = 0.05...")
    -- local model = xsvm.vectorized{kernel = kernLin(), C = 0.05}
-   local model = xsvm.vectorized{kernel = kernPoly(1,3), C = 0.05}
+   local model_kern_poly = xsvm.vectorized{kernel = kernPoly(1,3), C = 0.05}
    --print("Breakpoint1")
 
    -- 3. Train the kernel SVM
    print("Training the kernel SVM...")
-   local error_train = model:train(data_train)
+   -- local error_train = model:train(data_train)
+   local error_train_kern_poly = model_kern_poly:train(data_train_kern_poly)
    
    -- 4. Testing using the kernel SVM
    print("Testing the kernel SVM...")
-   local error_test = model:test(data_test)
+   -- local error_test = model:test(data_test)
+   local error_test_kern_poly = model_kern_poly:test(data_test_kern_poly)
 
    -- 6. Print the result
-   print("Train error = "..error_train.."; Testing error = "..error_test)
+   -- print("Train error = "..error_train.."; Testing error = "..error_test)
+   print("Train error for Polynomial Kernel= "..error_train_kern_poly.."; Testing error for Polynomial Kernel = "..error_test_kern_poly)
+
 end
 
 main()
