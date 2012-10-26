@@ -119,7 +119,7 @@ end
 function multOneVsOne(mfunc)
    -- Remove the following line and add your stuff
    -- print("You have to define this function by yourself!");
--- Create an one-vs-all trainer
+-- Create an one-vs-one trainer
    local mult = {}
    -- Transform the dataset for one versus all
    local function procOneVsOne(dataset,class1,class2)
@@ -127,11 +127,12 @@ function multOneVsOne(mfunc)
       -- class1 is a particular class.
       -- class2 is a particular class.
       local data = {}
+      local data_size = 0
       -- Iterate through each dataset
       --for i = 1, dataset:classes() do
 	 -- Create this dataset, with size() method returning the same thing as dataset
      --	data[i] = {size = dataset.size}
-	 -- Modify the labels
+     
 	 for j = 1, dataset:size() do
 	    -- Create entry
 	    data[j] = {}
@@ -139,16 +140,19 @@ function multOneVsOne(mfunc)
 	    
 	    if dataset[j][2][1] == class1 then
 	       -- The label same to this class 1 is set to 1
+           data_size = data_size + 1
            data[j][1] = dataset[j][1]
 	       data[j][2] = torch.ones(1)
 	    else
            if dataset[j][2][1] == class2 then
 	       -- The label from this class 2 is set to -1
+           data_size = data_size + 1
            data[j][1] = dataset[j][1]
 	       data[j][2] = -torch.ones(1)
         end
 	    end
 	 end
+      function data:size() return data_size end
       --end
       -- Return this set of datsets
       return data
@@ -157,15 +161,22 @@ function multOneVsOne(mfunc)
    function mult:train(dataset)
       -- Define mult:classes
       mult.classes = dataset.classes
+      local i_cntr = -1
+      local j_cntr = -1
+      local no_of_model = 0
+      for i_cntr = 1, mult.classes-1 do
+      for j_cntr = i+1, mult.classes do
       -- Preprocess the data
-      local data = procOneVsAll(dataset)
-      -- Iterate through the number of classes
-      for i = 1, dataset:classes() do
+      -- Make selection from data for mult.classes Combine 2 ie select each pair of 2 classes out of our total no. of classes.
+      local data[no_of_model] = procOneVsOne(dataset,i_cntr,j_cntr)
+     -- for i = 1, dataset:classes() do
 	 -- Create a model
-	 mult[i] = mfunc()
+     no_of_model = no_of_model + 1
+	 mult[no_of_model] = mfunc()
 	 -- Train the model
-	 mult[i]:train(data[i])
+	 mult[no_of_model]:train(data[i])
       end
+     end
       -- Return the training error
       return mult:test(dataset)
    end
@@ -191,8 +202,22 @@ function multOneVsOne(mfunc)
       -- print("You have to define this function by yourself!");
       -- Define mult:classes
       mult.classes = dataset.classes
+      predicted_class = torch.zeroes(mult.classes)
+      local no_of_model = 0
+      for i_cntr = 1, mult.classes-1 do
+      for j_cntr = i+1, mult.classes do
+      no_of_model = no_of_model + 1
+
+
+
+
+
+
+
+
+
       -- Preprocess the data
-      local data = procOneVsAll(dataset)
+      local data = procOneVsOne(dataset)
       -- Iterate through the number of classes
       for i = 1, dataset:classes() do
 	 -- Create a model
