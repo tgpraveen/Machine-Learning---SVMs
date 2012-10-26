@@ -164,11 +164,13 @@ function multOneVsOne(mfunc)
       local i_cntr = -1
       local j_cntr = -1
       local no_of_model = 0
+      local data = {}
+
       for i_cntr = 1, mult.classes-1 do
       for j_cntr = i+1, mult.classes do
       -- Preprocess the data
       -- Make selection from data for mult.classes Combine 2 ie select each pair of 2 classes out of our total no. of classes.
-      local data[no_of_model] = procOneVsOne(dataset,i_cntr,j_cntr)
+       data[no_of_model] = procOneVsOne(dataset,i_cntr,j_cntr)
      -- for i = 1, dataset:classes() do
 	 -- Create a model
      no_of_model = no_of_model + 1
@@ -182,6 +184,8 @@ function multOneVsOne(mfunc)
    end
    -- Test on dataset
    function mult:test(dataset)
+
+
       -- Set returning testing error
       local error = 0
       -- Iterate through the number of classes
@@ -208,31 +212,33 @@ function multOneVsOne(mfunc)
       for j_cntr = i+1, mult.classes do
       no_of_model = no_of_model + 1
 
-
-
-
-
-
-
-
-
       -- Preprocess the data
       local data = procOneVsOne(dataset)
       -- Iterate through the number of classes
-      for i = 1, dataset:classes() do
+      --for i = 1, dataset:classes() do
 	 -- Create a model
-	 mult[i] = mfunc()
+	 mult[no_ofmodel] = mfunc()
 	 -- Train the model
-	 mult[i]:train(data[i])
+	 mult[i]:train(data,i_cntr,j_cntr)
+     -- end
+     if (multi[i]:g(x)[1]==1) then
+     predicted_class[i_cntr] = predicted_class[i_cntr] + 1
+     else
+     predicted_class[j_cntr] = predicted_class[j_cntr] + 1
+	 end
+
+    local largest_class_value = -99999999
+    local largest_corresponding_class_num = -1
+    for i = 1, mult.classes do
+      if (predicted[i] > largest_class_value) then
+             largest_class_value = predicted[i]
+             largest_corresponding_class_num = i              
       end
-    local largest_W_dot_X = -99999999
-    local largest_w_dot_X_corresponding_i = -1
-    for i = 1, dataset:classes() do
-      if (torch.dot(mult[i].W,x)>largest_W_dot_X) then
-             largest_W_dot_X = torch.dot(mult[i].W,x)
-             largest_w_dot_X_corresponding_i = i              
     end
+   end
    end
    -- Return this one-vs-all trainer
    return i
+end
+end
 end

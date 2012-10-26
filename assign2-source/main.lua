@@ -28,7 +28,7 @@ function main()
    print("Initializing datasets...")
    -- local data_train, data_test = spambase:getDatasets(3000,1000)
    -- local data_train_kern_poly, data_test_kern_poly = spambase:getDatasets(3000,1000)
-   local data_train_crossvalid, data_test_crossvalid = spambase:getDatasets(100,1000)
+   local data_train_crossvalid, data_test_crossvalid = spambase:getDatasets(10,1000)
 
    -- 2. Initialize a dual SVM with linear kernel, and C = 0.05.
    print("Initializing a Polynomial kernel SVM with C = 0.05...")
