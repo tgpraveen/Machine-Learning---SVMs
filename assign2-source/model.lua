@@ -99,6 +99,7 @@ function modPrimSVM(inputs, r)
         	return (-y[1]*x) + r:dw(model.w)
         else
             return r:dw(model.w)
+   	    end
    end
    -- Define the output function. Output is a 1-dim tensor.
    function model:f(x)
@@ -112,7 +113,7 @@ function modPrimSVM(inputs, r)
       -- print("You have to define this function by yourself!");
 		if model:f(x)[1] >= 0 then return torch.ones(1) end
       		return -torch.ones(1)
-   		end
+   end
    -- Return this model
    return model
 end
