@@ -28,7 +28,7 @@ function main()
    print("Initializing datasets...")
    -- local data_train, data_test = spambase:getDatasets(3000,1000)
    -- local data_train_kern_poly, data_test_kern_poly = spambase:getDatasets(3000,1000)
-   local data_train_crossvalid, data_test_crossvalid = spambase:getDatasets(20,1000)
+   local data_train_crossvalid, data_test_crossvalid = spambase:getDatasets(100,1000)
 
    -- 2. Initialize a dual SVM with linear kernel, and C = 0.05.
    print("Initializing a Polynomial kernel SVM with C = 0.05...")
@@ -76,7 +76,7 @@ function main()
 
      -- Now our job is to find the avg cross validation error for our current degree and C based model.
      local avg_cross_validation_error = 0.0
-     print("current_errors_test:size(1) is: "..current_errors_test:size(1))
+     -- print("current_errors_test:size(1) is: "..current_errors_test:size(1))
      -- print("current_errors_test is: ")
      -- print(current_errors_test)
      for f = 1,current_errors_test:size(1) do

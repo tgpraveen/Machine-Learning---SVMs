@@ -72,7 +72,7 @@ function crossvalid(mfunc, k, dataset)
        
   -- for a = 1,models:size()  
    for i = 1, k do
-     print("Hey: "..i)
+    -- print("Hey: "..i)
     local cv_train_dataset = {}
 	local cv_test_dataset = {}
 

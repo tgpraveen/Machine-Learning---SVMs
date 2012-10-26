@@ -87,10 +87,28 @@ function multOneVsAll(mfunc)
    -- The decision function
    function mult:g(x)
       -- Remove the following line and add your stuff
-      print("You have to define this function by yourself!");
+      -- print("You have to define this function by yourself!");
+      -- Define mult:classes
+      mult.classes = dataset.classes
+      -- Preprocess the data
+      local data = procOneVsAll(dataset)
+      -- Iterate through the number of classes
+      for i = 1, dataset:classes() do
+	 -- Create a model
+	 mult[i] = mfunc()
+	 -- Train the model
+	 mult[i]:train(data[i])
+      end
+    local largest_W_dot_X = -99999999
+    local largest_w_dot_X_corresponding_i = -1
+    for i = 1, dataset:classes() do
+      if (torch.dot(mult[i].W,x)>largest_W_dot_X) then
+             largest_W_dot_X = torch.dot(mult[i].W,x)
+             largest_w_dot_X_corresponding_i = i              
+    end
    end
    -- Return this one-vs-all trainer
-   return mult
+   return i
 end
 
 -- mfunc is a callable that will return a trainable object
@@ -100,5 +118,96 @@ end
 -- model:g(x) will determine the label of a given x.
 function multOneVsOne(mfunc)
    -- Remove the following line and add your stuff
-   print("You have to define this function by yourself!");
+   -- print("You have to define this function by yourself!");
+-- Create an one-vs-all trainer
+   local mult = {}
+   -- Transform the dataset for one versus all
+   local function procOneVsOne(dataset,class1,class2)
+      -- The data table consists of data samples from dataset which have class1 or class2 as their classification.
+      -- class1 is a particular class.
+      -- class2 is a particular class.
+      local data = {}
+      -- Iterate through each dataset
+      --for i = 1, dataset:classes() do
+	 -- Create this dataset, with size() method returning the same thing as dataset
+     --	data[i] = {size = dataset.size}
+	 -- Modify the labels
+	 for j = 1, dataset:size() do
+	    -- Create entry
+	    data[j] = {}
+	    -- Copy the input
+	    
+	    if dataset[j][2][1] == class1 then
+	       -- The label same to this class 1 is set to 1
+           data[j][1] = dataset[j][1]
+	       data[j][2] = torch.ones(1)
+	    else
+           if dataset[j][2][1] == class2 then
+	       -- The label from this class 2 is set to -1
+           data[j][1] = dataset[j][1]
+	       data[j][2] = -torch.ones(1)
+        end
+	    end
+	 end
+      --end
+      -- Return this set of datsets
+      return data
+   end
+   -- Train models
+   function mult:train(dataset)
+      -- Define mult:classes
+      mult.classes = dataset.classes
+      -- Preprocess the data
+      local data = procOneVsAll(dataset)
+      -- Iterate through the number of classes
+      for i = 1, dataset:classes() do
+	 -- Create a model
+	 mult[i] = mfunc()
+	 -- Train the model
+	 mult[i]:train(data[i])
+      end
+      -- Return the training error
+      return mult:test(dataset)
+   end
+   -- Test on dataset
+   function mult:test(dataset)
+      -- Set returning testing error
+      local error = 0
+      -- Iterate through the number of classes
+      for i = 1, dataset:size() do
+	 -- Iterative error rate computation
+	 if torch.sum(torch.ne(mult:g(dataset[i][1]), dataset[i][2])) == 0 then
+	    error = error/i*(i-1)
+	 else
+	    error = error/i*(i-1) + 1/i
+	 end
+      end
+      -- Return the testing error
+      return error
+   end
+   -- The decision function
+   function mult:g(x)
+      -- Remove the following line and add your stuff
+      -- print("You have to define this function by yourself!");
+      -- Define mult:classes
+      mult.classes = dataset.classes
+      -- Preprocess the data
+      local data = procOneVsAll(dataset)
+      -- Iterate through the number of classes
+      for i = 1, dataset:classes() do
+	 -- Create a model
+	 mult[i] = mfunc()
+	 -- Train the model
+	 mult[i]:train(data[i])
+      end
+    local largest_W_dot_X = -99999999
+    local largest_w_dot_X_corresponding_i = -1
+    for i = 1, dataset:classes() do
+      if (torch.dot(mult[i].W,x)>largest_W_dot_X) then
+             largest_W_dot_X = torch.dot(mult[i].W,x)
+             largest_w_dot_X_corresponding_i = i              
+    end
+   end
+   -- Return this one-vs-all trainer
+   return i
 end
