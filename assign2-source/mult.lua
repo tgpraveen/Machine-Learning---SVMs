@@ -89,7 +89,8 @@ function multOneVsAll(mfunc)
       -- Remove the following line and add your stuff
       -- print("You have to define this function by yourself!");
       -- Define mult:classes
-      mult.classes = dataset.classes
+
+      --[[mult.classes = dataset.classes
       -- Preprocess the data
       local data = procOneVsAll(dataset)
       -- Iterate through the number of classes
@@ -99,6 +100,7 @@ function multOneVsAll(mfunc)
 	 -- Train the model
 	 mult[i]:train(data[i])
       end
+]]--
     -- local largest_W_dot_X = -99999999
     -- local largest_w_dot_X_corresponding_i = -1
        local largest_f_X = -99999999
