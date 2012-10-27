@@ -99,12 +99,17 @@ function multOneVsAll(mfunc)
 	 -- Train the model
 	 mult[i]:train(data[i])
       end
-    local largest_W_dot_X = -99999999
-    local largest_w_dot_X_corresponding_i = -1
+    -- local largest_W_dot_X = -99999999
+    -- local largest_w_dot_X_corresponding_i = -1
+       local largest_f_X = -99999999
+       local largest_f_X_corresponding_i = -1
     for i = 1, dataset:classes() do
-      if (torch.dot(mult[i].W,x)>largest_W_dot_X) then
-             largest_W_dot_X = torch.dot(mult[i].W,x)
-             largest_w_dot_X_corresponding_i = i              
+      --if (torch.dot(mult[i].W,x)>largest_W_dot_X) then
+        --     largest_W_dot_X = torch.dot(mult[i].W,x)
+          --   largest_w_dot_X_corresponding_i = i
+        if (mult[i]:f(x)>largest_f_X) then
+               largest_f_X = mult[i]:f(x) 
+               largest_f_X_corresponding_i = i              
     end
    end
    -- Return this one-vs-all trainer

@@ -28,7 +28,7 @@ function main()
    print("Initializing datasets...")
    -- local data_train, data_test = spambase:getDatasets(3000,1000)
    -- local data_train_kern_poly, data_test_kern_poly = spambase:getDatasets(3000,1000)
-   local data_train_crossvalid, data_test_crossvalid = spambase:getDatasets(10,1000)
+   local data_train_crossvalid, data_test_crossvalid = spambase:getDatasets(10,2)
 
    -- 2. Initialize a dual SVM with linear kernel, and C = 0.05.
    print("Initializing a Polynomial kernel SVM with C = 0.05...")
@@ -52,6 +52,7 @@ function main()
        -- degree,C_var_formal_arg
      local best_cross_validation_error=10
      local best_C = 0
+
      local p = 0
      local z = 4
      local deg = 4
@@ -93,9 +94,83 @@ function main()
     end
     print("Best Average Cross Validation error is: "..best_cross_validation_error)
     print("Best correseponding C is: "..best_C)
+   return best_C
    end
-   do_cross_valid_q2_a()
+
+   -- do_cross_valid_q2_a()
+
+   function do_cross_valid_q2_b()
+     local best_C_from_q_2_a = do_cross_valid_q2_a()
+     print("I know best C to use is: "..best_C_from_q_2_a)
+     local deg = 5                                           --large range of degree
+     for i = 0, deg-1 do
+     local degree = 0
+     local C_var_formal_arg = 0
+
+     local various_avg_cross_validation_error_for_different_degree = {}
+     local size_of_various_avg_cross_validation_error_for_different_degree = 0
+     local various_avg_training_error_for_different_degree = {}
+     local size_of_various_avg_training_error_for_different_degree = 0
+     local various_avg_testing_error_for_different_degree = {}
+     local size_of_various_avg_testing_error_for_different_degree = 0
+
+     degree = i+1
+     C_var_formal_arg = best_C_from_q_2_a
+
+     local function mfunc()
+	   		return xsvm.vectorized{kernel = kernPoly(1,degree), C = C_var_formal_arg}
+	 end
+
+     -- current_models, current_errors_train, current_errors_test = {}
+     local current_models, current_errors_train, current_errors_test = crossvalid(mfunc,10,data_train_crossvalid)
+
+
+     -- Now our job is to find the avg cross validation error for our current degree and C based model.
+     local avg_cross_validation_error = 0.0
+     local avg_training_error = 0.0
+     local avg_testing_error = 0.0
+     -- print("current_errors_test:size(1) is: "..current_errors_test:size(1))
+     -- print("current_errors_test is: ")
+     -- print(current_errors_test)
+     for f = 1,current_errors_test:size(1) do
+	     avg_cross_validation_error = (avg_cross_validation_error*(current_errors_test:size(1)-1)/current_errors_test:size(1)) + (current_errors_test[f]/current_errors_test:size(1))
+--(avg_cross_validation_error*(current_errors_test:size()-1)/current_errors_test:size())
+--+(current_errors_test[f]/current_errors_test:size())
+     end
+
+	for r = 1,current_errors_train:size(1) do
+			 avg_training_error = (avg_training_error*(current_errors_train:size(1)-1)/current_errors_train:size(1)) + (current_errors_train[r]/current_errors_train:size(1))
+	end
+
+    for t = 1,current_errors_test:size(1) do
+			 avg_testing_error = (avg_testing_error*(current_errors_test:size(1)-1)/current_errors_test:size(1)) + (current_models[t]:test(data_test_crossvalid)/current_errors_test:size(1))
+	end
+
+      various_avg_cross_validation_error_for_different_degree[degree] =  avg_cross_validation_error
+      size_of_various_avg_cross_validation_error_for_different_degree = size_of_various_avg_cross_validation_error_for_different_degree + 1
+
+      various_avg_training_error_for_different_degree[degree] =  avg_training_error
+      size_of_various_avg_training_error_for_different_degree = size_of_various_avg_training_error_for_different_degree + 1
+
+      various_avg_testing_error_for_different_degree[degree] =  avg_testing_error
+      size_of_various_avg_testing_error_for_different_degree = size_of_various_avg_testing_error_for_different_degree + 1
+
+	 end
+
+--Now let's plot it all.
+    gnuplot.epsfigure('q_2_b.eps')
+	gnuplot.plot({'Avg Training error', various_avg_training_error_for_different_degree})
+	gnuplot.plot({'Avg Cross validation error', various_avg_cross_validation_error_for_different_degree})
+	gnuplot.plot({'Avg Testing error', various_avg_testing_error_for_different_degree})
+	gnuplot.xlabel('Degree of polynomial')
+	gnuplot.ylabel('Average errors of various types')
+	gnuplot.plotflush()
+
+    print("Reached end of cross_valid_q_2_b")
+
+   end
    
+   do_cross_valid_q2_b()
 
    -- 6. Print the result
    -- print("Train error = "..error_train.."; Testing error = "..error_test)
