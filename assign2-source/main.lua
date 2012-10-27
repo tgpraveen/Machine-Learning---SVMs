@@ -162,10 +162,10 @@ function main()
 
 --Now let's plot it all.
     gnuplot.epsfigure('q_2_b.eps')
-	gnuplot.plot({'Avg Training error', various_avg_training_error_for_different_degree})
-	gnuplot.plot({'Avg Cross validation error', various_avg_cross_validation_error_for_different_degree})
-	gnuplot.plot({'Avg Testing error', various_avg_testing_error_for_different_degree})
-	gnuplot.xlabel('Degree of polynomial')
+	gnuplot.plot({'Avg Training error', various_avg_training_error_for_different_degree,'-'},{'Avg Cross validation error', various_avg_cross_validation_error_for_different_degree,'-'},{'Avg Testing error', various_avg_testing_error_for_different_degree,'-'})
+	-- gnuplot.plot({'Avg Cross validation error', various_avg_cross_validation_error_for_different_degree,'-'})
+	-- gnuplot.plot({'Avg Testing error', various_avg_testing_error_for_different_degree,'-'})
+	-- gnuplot.xlabel('Degree of polynomial')
 	gnuplot.ylabel('Average errors of various types')
 	gnuplot.plotflush()
 
