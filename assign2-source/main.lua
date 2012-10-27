@@ -103,16 +103,19 @@ function main()
      local best_C_from_q_2_a = do_cross_valid_q2_a()
      print("I know best C to use is: "..best_C_from_q_2_a)
      local deg = 5                                           --large range of degree
+
+     local various_avg_cross_validation_error_for_different_degree = torch.zeros(deg)
+     local size_of_various_avg_cross_validation_error_for_different_degree = 0
+     local various_avg_training_error_for_different_degree = torch.zeros(deg)
+     local size_of_various_avg_training_error_for_different_degree = 0
+     local various_avg_testing_error_for_different_degree = torch.zeros(deg)
+     local size_of_various_avg_testing_error_for_different_degree = 0
+
      for i = 0, deg-1 do
      local degree = 0
      local C_var_formal_arg = 0
 
-     local various_avg_cross_validation_error_for_different_degree = {}
-     local size_of_various_avg_cross_validation_error_for_different_degree = 0
-     local various_avg_training_error_for_different_degree = {}
-     local size_of_various_avg_training_error_for_different_degree = 0
-     local various_avg_testing_error_for_different_degree = {}
-     local size_of_various_avg_testing_error_for_different_degree = 0
+     
 
      degree = i+1
      C_var_formal_arg = best_C_from_q_2_a
