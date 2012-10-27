@@ -28,12 +28,17 @@ function main()
    print("Initializing datasets...")
    -- local data_train, data_test = spambase:getDatasets(3000,1000)
    -- local data_train_kern_poly, data_test_kern_poly = spambase:getDatasets(3000,1000)
-   local data_train_crossvalid, data_test_crossvalid = spambase:getDatasets(10,2)
+   -- local data_train_crossvalid, data_test_crossvalid = spambase:getDatasets(100,20)
+   local data_train_one_vs_all, data_test_multi_class = mnist:getDatasets(6000,1000)
+   local data_train_one_vs_one, data_test_one_vs_one = mnist:getDatasets(6000,1000)
 
    -- 2. Initialize a dual SVM with linear kernel, and C = 0.05.
-   print("Initializing a Polynomial kernel SVM with C = 0.05...")
+   -- print("Initializing a Polynomial kernel SVM with C = 0.05...")
+   print("Initializing a model...")
    -- local model = xsvm.vectorized{kernel = kernLin(), C = 0.05}
    -- local model_kern_poly = xsvm.vectorized{kernel = kernPoly(1,3), C = 0.05}
+   
+   
    --print("Breakpoint1")
 
    -- 3. Train the kernel SVM
@@ -111,11 +116,9 @@ function main()
      local various_avg_testing_error_for_different_degree = torch.zeros(deg)
      local size_of_various_avg_testing_error_for_different_degree = 0
 
-     for i = 0, deg-1 do
+   for i = 0, deg-1 do
      local degree = 0
      local C_var_formal_arg = 0
-
-     
 
      degree = i+1
      C_var_formal_arg = best_C_from_q_2_a
@@ -160,20 +163,55 @@ function main()
 
 	 end
 
+	-- Printing all values.
+	print("Printing all values:")
+    print("Avg Training error")
+    print(various_avg_training_error_for_different_degree)
+    print("Avg Cross validation error")
+    print(various_avg_cross_validation_error_for_different_degree)
+	print("Avg Testing error")
+    print(various_avg_testing_error_for_different_degree)
+ 
+
+
 --Now let's plot it all.
     gnuplot.epsfigure('q_2_b.eps')
 	gnuplot.plot({'Avg Training error', various_avg_training_error_for_different_degree,'-'},{'Avg Cross validation error', various_avg_cross_validation_error_for_different_degree,'-'},{'Avg Testing error', various_avg_testing_error_for_different_degree,'-'})
 	-- gnuplot.plot({'Avg Cross validation error', various_avg_cross_validation_error_for_different_degree,'-'})
 	-- gnuplot.plot({'Avg Testing error', various_avg_testing_error_for_different_degree,'-'})
-	-- gnuplot.xlabel('Degree of polynomial')
+	gnuplot.xlabel('Degree of polynomial')
 	gnuplot.ylabel('Average errors of various types')
 	gnuplot.plotflush()
 
     print("Reached end of cross_valid_q_2_b")
-
    end
    
-   do_cross_valid_q2_b()
+   -- do_cross_valid_q2_b()
+
+   function do_one_vs_all()
+   	local function mfunc()
+   		return modPrimSVM(data_train_one_vs_all:features(), regL2(0.05))
+    end
+    local mult1 = multOneVsAll(mfunc)
+    local trainer_one_vs_all = mult1:train(data_train_one_vs_all)
+    local tester_one_vs_all = mult1:test(data_test_one_vs_all)
+    print("For One vs One Training error = "..trainer_one_vs_all..", Testing error = "..tester_one_vs_all)
+   end
+   
+   do_one_vs_all()
+
+
+   function do_one_vs_one()
+     local function mfunc()
+         return modPrimSVM(data_train_one_vs_one:features(), regL2(0.05))
+     end
+     local mult2 = multOneVsAll(mfunc)
+     local trainer_one_vs_one = mult2:train(data_train_one_vs_one)
+     local tester_one_vs_one = mult2:test(data_test_one_vs_one)
+     print("For One vs One Training error = "..trainer_one_vs_one..", Testing error = "..tester_one_vs_one)
+   end
+
+   do_one_vs_one()
 
    -- 6. Print the result
    -- print("Train error = "..error_train.."; Testing error = "..error_test)

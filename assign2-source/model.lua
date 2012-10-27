@@ -88,19 +88,27 @@ function modPrimSVM(inputs, r)
    -- Define the loss function. Output is a real number (not 1-dim tensor!).
    -- Assuming y is a 1-dim tensor. Taking regularizer into consideration
    function model:l(xi,yi)
-      if ((1-yi*(torch.dot(model.w,xi)))>0) then return (1-yi*(torch.dot(model.w,xi))+r:l(model.w))
+      if ((1-((torch.dot(model.w,xi)*yi[1])))>0) then return (1-(torch.dot(model.w,xi)*yi[1])+r:l(model.w))
       	else return r:l(model.w)
 	  end
    end
    function model:dw(x,y)
       -- Remove the following line and add your stuff
       -- print("You have to define this function by yourself!");
-		if ((1-yi*(torch.dot(model.w,xi)))>0) then 
-        	return (-y[1]*x) + r:dw(model.w)
+		if ((1-y[1]*(torch.dot(model.w,x)))>0) then 
+        	return (-x*y[1]) + r:dw(model.w)
         else
             return r:dw(model.w)
    	    end
    end
+
+   function model:train(data_train)
+	   local trainer_stoch = trainerSGD(model, stepCons(.05))
+	   local loss_train, error_train = trainer_stoch:train(data_train, data_train:size())
+	   return loss_train, error_train
+   end
+
+
    -- Define the output function. Output is a 1-dim tensor.
    function model:f(x)
       -- Remove the following line and add your stuff

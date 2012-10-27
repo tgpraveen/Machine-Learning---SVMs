@@ -112,9 +112,12 @@ function multOneVsAll(mfunc)
                largest_f_X_corresponding_i = i              
     end
    end
-   -- Return this one-vs-all trainer
    return i
+   end
+   -- Return this one-vs-all trainer
+   return mult
 end
+
 
 -- mfunc is a callable that will return a trainable object
 -- The trainable object must have to protocols:
@@ -242,8 +245,8 @@ function multOneVsOne(mfunc)
     end
    end
    end
-   -- Return this one-vs-all trainer
-   return i
+return i   
 end
-end
+-- Return this one-vs-one trainer
+   return mult
 end
