@@ -105,16 +105,18 @@ function multOneVsAll(mfunc)
     -- local largest_w_dot_X_corresponding_i = -1
        local largest_f_X = -99999999
        local largest_f_X_corresponding_i = -1
-    for i = 1, dataset:classes() do
+       local i = 0
+    for i = 1, 10 do
+      --i = p - 1
       --if (torch.dot(mult[i].W,x)>largest_W_dot_X) then
         --     largest_W_dot_X = torch.dot(mult[i].W,x)
           --   largest_w_dot_X_corresponding_i = i
-        if (mult[i]:f(x)>largest_f_X) then
-               largest_f_X = mult[i]:f(x) 
-               largest_f_X_corresponding_i = i              
+        if (mult[i]:f(x)[1]>largest_f_X) then
+               largest_f_X = mult[i]:f(x)[1] 
+               largest_f_X_corresponding_i = i             
     end
    end
-   return i
+   return torch.ones(1)*largest_f_X_corresponding_i
    end
    -- Return this one-vs-all trainer
    return mult
@@ -218,6 +220,8 @@ function multOneVsOne(mfunc)
       mult.classes = dataset.classes
       predicted_class = torch.zeroes(mult.classes)
       local no_of_model = 0
+      local largest_class_value = -99999999
+      local largest_corresponding_class_num = -1
       for i_cntr = 1, mult.classes-1 do
       for j_cntr = i+1, mult.classes do
       no_of_model = no_of_model + 1
@@ -237,8 +241,8 @@ function multOneVsOne(mfunc)
      predicted_class[j_cntr] = predicted_class[j_cntr] + 1
 	 end
 
-    local largest_class_value = -99999999
-    local largest_corresponding_class_num = -1
+    -- local largest_class_value = -99999999
+    -- local largest_corresponding_class_num = -1
     for i = 1, mult.classes do
       if (predicted[i] > largest_class_value) then
              largest_class_value = predicted[i]
@@ -247,7 +251,7 @@ function multOneVsOne(mfunc)
     end
    end
    end
-return i   
+return torch.ones(1)*largest_corresponding_class_num   
 end
 -- Return this one-vs-one trainer
    return mult

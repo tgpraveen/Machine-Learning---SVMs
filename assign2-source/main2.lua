@@ -28,8 +28,8 @@ function main()
    print("Initializing datasets...")
    -- local data_train, data_test = spambase:getDatasets(3000,1000)
    -- local data_train_kern_poly, data_test_kern_poly = spambase:getDatasets(3000,1000)
-   local data_train_crossvalid, data_test_crossvalid = spambase:getDatasets(2000,1000)
-   -- local data_train_one_vs_all, data_test_one_vs_all = mnist:getDatasets(6000,1000)
+   -- local data_train_crossvalid, data_test_crossvalid = spambase:getDatasets(2000,1000)
+      local data_train_one_vs_all, data_test_one_vs_all = mnist:getDatasets(6000,1000)
    -- local data_train_one_vs_one, data_test_one_vs_one = mnist:getDatasets(6000,1000)
 
    -- 2. Initialize a dual SVM with linear kernel, and C = 0.05.
@@ -186,7 +186,7 @@ function main()
     print("Reached end of cross_valid_q_2_b")
    end
    
-   do_cross_valid_q2_b()
+   -- do_cross_valid_q2_b()
 
    function do_one_vs_all()
    	local function mfunc()
@@ -198,7 +198,7 @@ function main()
     print("For One vs One Training error = "..trainer_one_vs_all..", Testing error = "..tester_one_vs_all)
    end
    
-   -- do_one_vs_all()
+   do_one_vs_all()
 
 
    function do_one_vs_one()
