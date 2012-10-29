@@ -92,11 +92,13 @@ function modPrimSVM(inputs, r)
       	else return r:l(model.w)
 	  end
    end
-   function model:dw(x,y)
+   function model:dw(xi,yi)
       -- Remove the following line and add your stuff
       -- print("You have to define this function by yourself!");
-		if ((1-y[1]*(torch.dot(model.w,x)))>0) then 
-        	return (-x*y[1]) + r:dw(model.w)
+         --print("xi in model:dw() is : ")
+         --print(xi)
+		if ((1-(torch.dot(model.w,xi)*yi[1]))>0) then 
+        	return (-xi*yi[1]) + r:dw(model.w)
         else
             return r:dw(model.w)
    	    end

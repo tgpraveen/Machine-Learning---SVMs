@@ -131,6 +131,8 @@ function trainerSGD(model, step)
 		 if (i>dataset:size()) then break end
 		 --dw = dw*(i-1)/i + model:dw(dataset[i][1], dataset[i][2])/i
 		 local dw = torch.zeros(model.w:size())
+		 -- print("And dataset is: ")
+		 -- print(dataset)
 		 dw = model:dw(dataset[i][1], dataset[i][2])
 		 --dw = model:dw(dataset[j][1], dataset[j][2])
 		 

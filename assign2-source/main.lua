@@ -31,6 +31,8 @@ function main()
    local data_train_crossvalid, data_test_crossvalid = spambase:getDatasets(2000,1000)
    -- local data_train_one_vs_all, data_test_one_vs_all = mnist:getDatasets(6000,1000)
    -- local data_train_one_vs_one, data_test_one_vs_one = mnist:getDatasets(6000,1000)
+   -- local data_train_one_vs_one, data_test_one_vs_one = data_train_one_vs_all, data_test_one_vs_all 
+
 
    -- 2. Initialize a dual SVM with linear kernel, and C = 0.05.
    -- print("Initializing a Polynomial kernel SVM with C = 0.05...")
@@ -195,7 +197,7 @@ function main()
     local mult1 = multOneVsAll(mfunc)
     local trainer_one_vs_all = mult1:train(data_train_one_vs_all)
     local tester_one_vs_all = mult1:test(data_test_one_vs_all)
-    print("For One vs One Training error = "..trainer_one_vs_all..", Testing error = "..tester_one_vs_all)
+    print("For One vs All Training error = "..trainer_one_vs_all..", Testing error = "..tester_one_vs_all)
    end
    
    -- do_one_vs_all()
@@ -205,7 +207,7 @@ function main()
      local function mfunc()
          return modPrimSVM(data_train_one_vs_one:features(), regL2(0.05))
      end
-     local mult2 = multOneVsAll(mfunc)
+     local mult2 = multOneVsOne(mfunc)
      local trainer_one_vs_one = mult2:train(data_train_one_vs_one)
      local tester_one_vs_one = mult2:test(data_test_one_vs_one)
      print("For One vs One Training error = "..trainer_one_vs_one..", Testing error = "..tester_one_vs_one)

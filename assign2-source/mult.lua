@@ -52,6 +52,7 @@ function multOneVsAll(mfunc)
       -- Return this set of datsets
       return data
    end
+
    -- Train models
    function mult:train(dataset)
       -- Define mult:classes
@@ -106,7 +107,7 @@ function multOneVsAll(mfunc)
        local largest_f_X = -99999999
        local largest_f_X_corresponding_i = -1
        local i = 0
-    for i = 1, 10 do
+    for i = 1, mult:classes() do
       --i = p - 1
       --if (torch.dot(mult[i].W,x)>largest_W_dot_X) then
         --     largest_W_dot_X = torch.dot(mult[i].W,x)
@@ -119,6 +120,7 @@ function multOneVsAll(mfunc)
    return torch.ones(1)*largest_f_X_corresponding_i
    end
    -- Return this one-vs-all trainer
+  -- print("Returning mult")
    return mult
 end
 
@@ -132,7 +134,7 @@ function multOneVsOne(mfunc)
    -- Remove the following line and add your stuff
    -- print("You have to define this function by yourself!");
 -- Create an one-vs-one trainer
-   local mult = {}
+   local mult2 = {}
    -- Transform the dataset for one versus all
    local function procOneVsOne(dataset,class1,class2)
       -- The data table consists of data samples from dataset which have class1 or class2 as their classification.
@@ -146,21 +148,24 @@ function multOneVsOne(mfunc)
      --	data[i] = {size = dataset.size}
      
 	 for j = 1, dataset:size() do
-	    -- Create entry
-	    data[j] = {}
+	    
 	    -- Copy the input
 	    
 	    if dataset[j][2][1] == class1 then
 	       -- The label same to this class 1 is set to 1
            data_size = data_size + 1
-           data[j][1] = dataset[j][1]
-	       data[j][2] = torch.ones(1)
+           -- Create entry
+           data[data_size] = {}
+           data[data_size][1] = dataset[j][1]
+	       data[data_size][2] = torch.ones(1)
 	    else
            if dataset[j][2][1] == class2 then
 	       -- The label from this class 2 is set to -1
            data_size = data_size + 1
-           data[j][1] = dataset[j][1]
-	       data[j][2] = -torch.ones(1)
+           -- Create entry
+	       data[data_size] = {}
+           data[data_size][1] = dataset[j][1]
+	       data[data_size][2] = -torch.ones(1)
         end
 	    end
 	 end
@@ -170,32 +175,33 @@ function multOneVsOne(mfunc)
       return data
    end
    -- Train models
-   function mult:train(dataset)
-      -- Define mult:classes
-      mult.classes = dataset.classes
+   function mult2:train(dataset)
+      -- Define mult2:classes
+      mult2.classes = dataset.classes
       local i_cntr = -1
       local j_cntr = -1
       local no_of_model = 0
       local data = {}
 
-      for i_cntr = 1, mult.classes-1 do
-      for j_cntr = i+1, mult.classes do
+      for i_cntr = 1, mult2.classes()-1 do
+      for j_cntr = i_cntr+1, mult2.classes() do
       -- Preprocess the data
-      -- Make selection from data for mult.classes Combine 2 ie select each pair of 2 classes out of our total no. of classes.
-       data[no_of_model] = procOneVsOne(dataset,i_cntr,j_cntr)
+      -- Make selection from data for mult2.classes Combine 2 ie select each pair of 2 classes out of our total no. of classes.
+       
      -- for i = 1, dataset:classes() do
 	 -- Create a model
      no_of_model = no_of_model + 1
-	 mult[no_of_model] = mfunc()
+     data[no_of_model] = procOneVsOne(dataset,i_cntr,j_cntr)
+	 mult2[no_of_model] = mfunc()
 	 -- Train the model
-	 mult[no_of_model]:train(data[i])
+	 mult2[no_of_model]:train(data[no_of_model])
       end
      end
       -- Return the training error
-      return mult:test(dataset)
+      return mult2:test(dataset)
    end
    -- Test on dataset
-   function mult:test(dataset)
+   function mult2:test(dataset)
 
 
       -- Set returning testing error
@@ -203,7 +209,7 @@ function multOneVsOne(mfunc)
       -- Iterate through the number of classes
       for i = 1, dataset:size() do
 	 -- Iterative error rate computation
-	 if torch.sum(torch.ne(mult:g(dataset[i][1]), dataset[i][2])) == 0 then
+	 if torch.sum(torch.ne(mult2:g(dataset[i][1]), dataset[i][2])) == 0 then
 	    error = error/i*(i-1)
 	 else
 	    error = error/i*(i-1) + 1/i
@@ -213,46 +219,58 @@ function multOneVsOne(mfunc)
       return error
    end
    -- The decision function
-   function mult:g(x)
+   function mult2:g(x)
+      -- print("Entering mult2:g(x)")
       -- Remove the following line and add your stuff
       -- print("You have to define this function by yourself!");
-      -- Define mult:classes
-      mult.classes = dataset.classes
-      predicted_class = torch.zeroes(mult.classes)
+      -- Define mult2:classes
+      -- mult2.classes = dataset.classes
+      local predicted_class = torch.zeros(mult2:classes())
       local no_of_model = 0
       local largest_class_value = -99999999
       local largest_corresponding_class_num = -1
-      for i_cntr = 1, mult.classes-1 do
-      for j_cntr = i+1, mult.classes do
-      no_of_model = no_of_model + 1
+      
+      --mult:train(dataset)
+      
 
-      -- Preprocess the data
-      local data = procOneVsOne(dataset)
+      for i_cntr = 1, mult2:classes()-1 do
+      for j_cntr = i_cntr+1, mult2:classes() do
+      no_of_model = no_of_model + 1
+      
+      --local data = procOneVsOne(dataset,i_cntr,j_cntr)
+      
       -- Iterate through the number of classes
       --for i = 1, dataset:classes() do
 	 -- Create a model
-	 mult[no_ofmodel] = mfunc()
+	 --mult[no_ofmodel] = mfunc()
 	 -- Train the model
-	 mult[i]:train(data,i_cntr,j_cntr)
+	 --mult[i]:train(data)
      -- end
-     if (multi[i]:g(x)[1]==1) then
+     if (mult2[no_of_model]:g(x)[1] == 1) then
      predicted_class[i_cntr] = predicted_class[i_cntr] + 1
-     else
-     predicted_class[j_cntr] = predicted_class[j_cntr] + 1
+     else if (mult2[no_of_model]:g(x)[1] == -1) then
+	          predicted_class[j_cntr] = predicted_class[j_cntr] + 1
+           else print("Some error occured in one vs one's g(x) located in mult.lua.")
 	 end
+     end
+
+     end
+     end
 
     -- local largest_class_value = -99999999
     -- local largest_corresponding_class_num = -1
-    for i = 1, mult.classes do
-      if (predicted[i] > largest_class_value) then
-             largest_class_value = predicted[i]
-             largest_corresponding_class_num = i              
+    for i = 1, mult2:classes() do
+      if (predicted_class[i] > largest_class_value) then
+             largest_class_value = predicted_class[i]
+             largest_corresponding_class_num = i            
       end
     end
-   end
-   end
+   --end
+   --end
+--print("Hi: "..largest_corresponding_class_num)
 return torch.ones(1)*largest_corresponding_class_num   
 end
--- Return this one-vs-one trainer
-   return mult
+   -- Return this one-vs-one trainer
+   --print("Returning mult2")
+   return mult2
 end
